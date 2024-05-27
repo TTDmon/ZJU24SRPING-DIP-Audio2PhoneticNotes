@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <math.h>
+#include <BluetoothSerial.h>
 
 Adafruit_PWMServoDriver pca1 = Adafruit_PWMServoDriver(0x40);
 Adafruit_PWMServoDriver pca2 = Adafruit_PWMServoDriver(0x41);
@@ -561,13 +562,24 @@ void setup() {
     Wire.begin(21,22);
     pca1.begin();
     pca2.begin();
+    //蓝牙模块的启动
+    SerialBT.begin("ESP32-BT"); //蓝牙设备名称
+    Serial.printf("bluetooth init complete!")
 }
 
 
 void loop() {
+    //读取蓝牙通信内容
+    if (SerialBT.available()) {
+        // 读取从客户端发送的数据
+        String received = SerialBT.readString();
+        Serial.print("Received: ");
+        Serial.println(received);
+    }
+
     if (Serial.available() > 0) {
     // 读取接收到的字符
-    char incomingChar = Serial.read();
+    char incomingChar = received;
     Serial.println(incomingChar);
 
     // 根据接收到的字符执行不同的操作
